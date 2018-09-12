@@ -1,0 +1,95 @@
+{{ header }}
+{{ column_left }}
+<div id="content">
+    <div class="page-header">
+        <div class="container-fluid">
+            <div class="pull-right">
+                <button type="submit" form="form-everypay" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+                <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+            <h1>{{ heading_title }}</h1>
+            <ul class="breadcrumb">
+                {% for breadcrumb in breadcrumbs %}
+                <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="container-fluid">
+        {% if error_warning %}
+        <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+        </div>
+        {% endif %}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_edit }}</h3>
+            </div>
+            <div class="panel-body">
+                <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-everypay" class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="input-key-id"><span data-toggle="tooltip" title="{{ help_key_id }}">{{ payment_entry_public_key }}</span></label>
+                        <div class="col-sm-10">
+                            <input type="text" name="payment_everypay_public_key" value="{{ payment_everypay_public_key }}" placeholder="{{ payment_entry_public_key }}" id="input-public-key" class="form-control" />
+                            {% if error_public_key %}
+                            <div class="text-danger">{{ payment_error_public_key }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="input-secret-key">{{ payment_entry_secret_key }}</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="payment_everypay_secret_key" value="{{ payment_everypay_secret_key }}" placeholder="{{ payment_entry_secret_key }}" id="input-secret-key" class="form-control" />
+                            {% if error_secret_key %}
+                            <div class="text-danger">{{ payment_error_secret_key }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="input-sandbox">{{ payment_entry_sandbox }}</label>
+                        <div class="col-sm-10">
+                            <input type="hidden" name="payment_everypay_sandbox" id="_input-sandbox" value="0" />
+                            <input type="checkbox" name="payment_everypay_sandbox" id="input-sandbox" {{ payment_everypay_sandbox ? 'checked': '' }} class="form-control" value="1" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="input-order-status"><span data-toggle="tooltip" title="{{ help_order_status }}">{{ entry_order_status }}</span></label>
+                        <div class="col-sm-10">
+                            <select name="payment_everypay_order_status_id" id="input-order-status" class="form-control">
+                                {% for payment_order_status in order_statuses %}
+                                {% if payment_order_status.order_status_id  ==  payment_everypay_order_status_id or payment_order_status.order_status_id  ==  2 %}
+                                <option value="{{ payment_order_status.order_status_id }}" selected="selected">{{ payment_order_status.name }}</option>
+                                {% else %}
+                                <option value="{{ payment_order_status.order_status_id }}">{{ payment_order_status.name }}</option>
+                                {% endif %} 
+                                {% endfor %}
+
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="input-status">{{ payment_entry_status }}</label>
+                        <div class="col-sm-10">
+                            <select name="payment_everypay_status" id="input-status" class="form-control">
+                                {% if payment_everypay_status %}
+                                <option value="1" selected="selected">{{ text_enabled }}</option>
+                                <option value="0">{{ text_disabled }}</option>
+                                {% else %}
+                                <option value="1">{{ text_enabled }}</option>
+                                <option value="0" selected="selected">{{ text_disabled }}</option>
+                                {% endif %} 
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="input-sort-order">{{ payment_entry_sort_order }}</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="payment_everypay_sort_order" value="{% if payment_everypay_sort_order %}{{ payment_everypay_sort_order }} {% else %}  0 {% endif %}" placeholder="{{ payment_entry_sort_order }}" id="input-sort-order" class="form-control" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{ footer }}

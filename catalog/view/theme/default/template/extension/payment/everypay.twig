@@ -1,0 +1,29 @@
+<script type="text/javascript" src="https://button.everypay.gr/js/button.js"></script>
+<script type="text/javascript">
+var EVERYPAY_DATA = {
+    amount:  {{ total}}, //1euro
+    description: "Order #{{ merchant_order_id}}",
+    key: "{{ public_key}}",
+    locale: "{{ test|slice(0,2)=="el" ? "el" : "en" }}",
+    callback: '',
+    {% if installments %}
+    max_installments: {{ installments}},
+    {% endif %}
+    sandbox:  {{ sandbox|number_format}}
+}
+var loadButton = setInterval(function () {
+      try {
+        EverypayButton.jsonInit(EVERYPAY_DATA, $('#payment-card-form'));
+        clearInterval(loadButton);
+      } catch (err) {}
+}, 100);
+</script>
+{% if sandbox == 1 %}
+<p style="text-align:right;">
+    <strong style="color: #ff0000">SANDBOX MODE</strong> ({{ sandbox_warning}})
+</p>
+{% endif %}
+<form id="payment-card-form" method="POST" action=" {{ return_url}}">
+    <input type="hidden" name="merchant_order_id" value=" {{ merchant_order_id}}" />
+    <div class="button-holder" style="float: right;"></div>
+</form>
