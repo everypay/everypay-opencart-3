@@ -1,4 +1,5 @@
-<script src="/catalog/view/javascript/everypayModal.js"  ></script>
+<script src="/catalog/view/javascript/everypayModal.js"></script>
+<div class="btn btn-primary pull-right btn-large" disabled="disabled" id="everypayBtn">Pay with card</div>
 
 <script type="text/javascript">
 
@@ -57,6 +58,11 @@
     loadEverypayScript(everypayUrl, () => {
         everypay.payform(payload, (r) => {
 
+            if (r.onLoad) {
+                document.getElementById('everypayBtn').removeAttribute('disabled');
+                document.getElementById('everypayBtn').addEventListener('click', modal.open)
+            }
+
             if (r.response == 'success') {
                 modal.destroy();
                 document.getElementById('everypayTokenInput').value = r.token;
@@ -68,7 +74,7 @@
 
 
 </script>
-<div class="btn btn-primary pull-right btn-large" onclick="modal.open()">Pay with card</div>
+
 
 <form id="payment-card-form" method="POST" action=" {{ return_url}}">
     <input type="hidden" name="merchant_order_id" value=" {{ merchant_order_id}}" />
