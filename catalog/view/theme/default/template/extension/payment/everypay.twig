@@ -45,20 +45,17 @@
     };
 
     {% if installments %}
-    payload.installments = calculate_installments({{ installments}})
+        payload.installments = calculate_installments({{ installments}})
     {% endif %}
 
     let everypayUrl = 'https://js.everypay.gr/v3';
 
     {% if sandbox == 1 %}
-    everypayUrl = 'https://sandbox-js.everypay.gr/v3';
+     everypayUrl = 'https://sandbox-js.everypay.gr/v3';
     {% endif %}
 
     loadEverypayScript(everypayUrl, () => {
         everypay.payform(payload, (r) => {
-
-            if (r.onLoad)
-                modal.open();
 
             if (r.response == 'success') {
                 modal.destroy();
@@ -71,11 +68,8 @@
 
 
 </script>
-{% if sandbox == 1 %}
-    <p style="text-align:right;">
-        <strong style="color: #ff0000">SANDBOX MODE</strong> ({{ sandbox_warning}})
-    </p>
-{% endif %}
+<div class="btn btn-primary pull-right btn-large" onclick="modal.open()">Pay with card</div>
+
 <form id="payment-card-form" method="POST" action=" {{ return_url}}">
     <input type="hidden" name="merchant_order_id" value=" {{ merchant_order_id}}" />
     <input type="hidden" name="everypayToken" id="everypayTokenInput" value="" />
