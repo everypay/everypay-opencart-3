@@ -1,29 +1,83 @@
-<script type="text/javascript" src="https://button.everypay.gr/js/button.js"></script>
+<script src="/catalog/view/javascript/everypayModal.js"></script>
+<div class="btn btn-primary pull-right btn-large" disabled="disabled" id="everypayBtn">Pay with card</div>
+
 <script type="text/javascript">
-var EVERYPAY_DATA = {
-    amount:  {{ total}}, //1euro
-    description: "Order #{{ merchant_order_id}}",
-    key: "{{ public_key}}",
-    locale: "{{ test|slice(0,2)=="el" ? "el" : "en" }}",
-    callback: '',
+
+    function loadEverypayScript(url, callback)
+    {
+        var head = document.getElementsByTagName('head')[0];
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = url;
+        script.onreadystatechange = callback;
+        script.onload = callback;
+        head.appendChild(script);
+    }
+
+
+    var calculate_installments = function (max_installments) {
+        var installments = [];
+
+        if (max_installments > 36)
+            return installments;
+
+        if (typeof max_installments != 'number' || max_installments > 36)
+            return installments;
+
+        var y = 2;
+        for (let i = 2; i <= max_installments; i += y) {
+            if (i >= 12)
+                y = 12;
+
+            installments.push(i);
+        }
+        return installments;
+    }
+
+    let modal = new window.EverypayModal();
+
+    let payload = {
+        pk: "{{ public_key}}",
+        locale: "{{ test|slice(0,2)=="el" ? "el" : "en" }}",
+        amount:  {{ total}},
+        data: {
+            billing: { addressLine1: "{{ billingAddress }}" }
+        },
+    };
+
     {% if installments %}
-    max_installments: {{ installments}},
+        payload.installments = calculate_installments({{ installments}})
     {% endif %}
-    sandbox:  {{ sandbox|number_format}}
-}
-var loadButton = setInterval(function () {
-      try {
-        EverypayButton.jsonInit(EVERYPAY_DATA, $('#payment-card-form'));
-        clearInterval(loadButton);
-      } catch (err) {}
-}, 100);
+
+    let everypayUrl = 'https://js.everypay.gr/v3';
+
+    {% if sandbox == 1 %}
+     everypayUrl = 'https://sandbox-js.everypay.gr/v3';
+    {% endif %}
+
+    loadEverypayScript(everypayUrl, () => {
+        everypay.payform(payload, (r) => {
+
+            if (r.onLoad) {
+                document.getElementById('everypayBtn').removeAttribute('disabled');
+                document.getElementById('everypayBtn').addEventListener('click', modal.open)
+            }
+
+            if (r.response == 'success') {
+                modal.destroy();
+                document.getElementById('everypayTokenInput').value = r.token;
+                document.getElementById('payment-card-form').submit();
+            }
+
+        });
+    });
+
+
 </script>
-{% if sandbox == 1 %}
-<p style="text-align:right;">
-    <strong style="color: #ff0000">SANDBOX MODE</strong> ({{ sandbox_warning}})
-</p>
-{% endif %}
+
+
 <form id="payment-card-form" method="POST" action=" {{ return_url}}">
     <input type="hidden" name="merchant_order_id" value=" {{ merchant_order_id}}" />
+    <input type="hidden" name="everypayToken" id="everypayTokenInput" value="" />
     <div class="button-holder" style="float: right;"></div>
 </form>
