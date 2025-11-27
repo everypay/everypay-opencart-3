@@ -18,6 +18,7 @@ $_['entry_order_status'] = 'Order Status';
 $_['payment_entry_status'] = 'Status';
 $_['payment_entry_sort_order'] = 'Sort Order';
 $_['payment_entry_sandbox'] = 'Sandbox mode';
+$_['payment_entry_iris'] = 'Enable IRIS';
 
 //tooltips
 $_['help_key_id'] = 'The Api Public Key and Secret Key you will recieve from the API keys section of Everypay Dashboard. Use test Key for testing purposes.';

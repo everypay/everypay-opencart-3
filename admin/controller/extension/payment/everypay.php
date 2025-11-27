@@ -27,6 +27,7 @@ class ControllerExtensionPaymentEverypay extends Controller
         $data['payment_entry_status'] = $this->language->get('payment_entry_status');
         $data['payment_entry_sort_order'] = $this->language->get('payment_entry_sort_order');
         $data['payment_entry_sandbox'] = $this->language->get('payment_entry_sandbox');
+        $data['payment_entry_iris'] = $this->language->get('payment_entry_iris');
 
         $data['button_save'] = $this->language->get('button_save');
         $data['button_cancel'] = $this->language->get('button_cancel');
@@ -100,6 +101,12 @@ class ControllerExtensionPaymentEverypay extends Controller
             $data['payment_everypay_sandbox'] = $this->request->post['payment_everypay_sandbox'];
         } else {
             $data['payment_everypay_sandbox'] = $this->config->get('payment_everypay_sandbox');
+        }
+
+        if (isset($this->request->post['payment_everypay_iris_enabled'])) {
+            $data['payment_everypay_iris_enabled'] = $this->request->post['payment_everypay_iris_enabled'];
+        } else {
+            $data['payment_everypay_iris_enabled'] = $this->config->get('payment_everypay_iris_enabled');
         }
 
         $this->load->model('localisation/order_status');
