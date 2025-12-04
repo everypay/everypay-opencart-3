@@ -49,6 +49,7 @@ class ControllerExtensionPaymentEverypay extends Controller
         $data['sandbox'] = $this->config->get('payment_everypay_sandbox');
         $data['sandbox_warning'] = $this->language->get('text_sandbox_warning');
         $data['return_url'] = $this->url->link('extension/payment/everypay/callback', '', 'SSL');
+        $data['checkout_url'] = $this->url->link('checkout/checkout', '', true);
         $data['installments'] = $this->getInstallments($data['total']);
         $data['billingAddress'] = $order_info['payment_address_1'];
         $data['iris_enabled'] = (bool)$this->config->get('payment_everypay_iris_enabled');

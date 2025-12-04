@@ -24,6 +24,8 @@
     var irisRequestErrorText = '{{ text_iris_request_error|escape('js') }}';
     var irisCallbackErrorText = '{{ text_iris_callback_error|escape('js') }}';
     var irisErrorContainerId = 'everypay-iris-error';
+    var irisSessionStorageKey = 'everypayIrisInProgress';
+    var checkoutUrl = '{{ checkout_url|replace({"'": "\\'"}) }}';
 
     function hideIrisError() {
         var container = document.getElementById(irisErrorContainerId);
@@ -68,6 +70,27 @@
     }
 
     let modal = new window.EverypayModal();
+
+    {% if iris_enabled %}
+    function handleBackForwardReload(event) {
+        var navType = null;
+        if (typeof performance !== 'undefined' && performance.getEntriesByType) {
+            var entries = performance.getEntriesByType('navigation');
+            if (entries && entries.length) {
+                navType = entries[0].type;
+            }
+        }
+        if ((event && event.persisted === true) || navType === 'back_forward') {
+            try {
+                sessionStorage.removeItem(irisSessionStorageKey);
+            } catch (e) {}
+            var reloadUrl = checkoutUrl;
+            reloadUrl += (reloadUrl.indexOf('?') === -1 ? '?' : '&') + 'iris_reset=' + Date.now();
+            window.location.replace(reloadUrl);
+        }
+    }
+    window.addEventListener('pageshow', handleBackForwardReload);
+    {% endif %}
 
     let payload = {
         pk: "{{ public_key}}",
@@ -170,6 +193,9 @@
                 if (r.paymentMethod && r.paymentMethod === 'iris') {
                     // IRIS payment - do not submit form
                     // EveryPay will redirect to bank, then call our irisCallback
+                    try {
+                        sessionStorage.setItem(irisSessionStorageKey, '1');
+                    } catch (e) {}
                     console.log('IRIS payment initiated - waiting for bank redirect');
                     return;
                 }
