@@ -148,7 +148,8 @@ window.EverypayModal = function () {
 	}
 	#pay-form {
 	    min-width: 100%;
-	    min-height: 100%;
+	    min-height: 450px;
+	    width: 100%;
 	}
 	#everypay-logo {
 	    display: flex;
